@@ -47,7 +47,8 @@ jobs:
       - name: Create PR Template
         id: pr-template
         run: |
-          PR_BODY=$(cat .github/pull_request_template.md)
+          PR_BODY=$(cat .github/PULL_REQUEST_TEMPLATE.md)
+          ls -a
           echo "pr_body<<EOF" >> $GITHUB_OUTPUT
           echo "$PR_BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
