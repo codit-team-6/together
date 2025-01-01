@@ -36,13 +36,22 @@ jobs:
       - name: Download Codes
         uses: actions/checkout@v4
 
+      # 브랜치 이름에서 Jira 이슈 번호 추출 (예: feat/#SCURM-1-login)
       - name: Extract Jira Issue
         id: extract-jira
         run: |
-          # 브랜치 이름에서 Jira 이슈 번호 추출 (예: feat/#SCURM-1-login)
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           JIRA_ISSUE=$(echo $BRANCH_NAME | grep -oE '#[A-Z]+-[0-9]+' | sed 's/^#//' || echo "")
           echo "jira_issue=$JIRA_ISSUE" >> $GITHUB_OUTPUT
+
+      # 커밋 메시지에서 "SCRUM-XX: " 패턴 제거
+      - name: Extract Clean Commit Message
+        id: clean-commit
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          CLEAN_COMMIT_MSG=$(echo "$COMMIT_MSG" | sed -E 's/[A-Z]+-[0-9]+:\s*//')
+          echo "commit_message=$CLEAN_COMMIT_MSG" >> $GITHUB_OUTPUT
+
 
       - name: Create PR Template
         id: pr-template
@@ -56,7 +65,7 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v7
         with:
-          title: "${{ steps.extract-jira.outputs.jira_issue }} #close ${{ github.event.head_commit.message }}"
+          title: "${{ steps.extract-jira.outputs.jira_issue }} #close ${{ steps.clean-commit.outputs.commit_message }}"
           body: ${{ steps.pr-template.outputs.pr_body }}
           base: main
           branch: ${{github.ref}}
