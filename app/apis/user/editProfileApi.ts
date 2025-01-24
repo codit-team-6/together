@@ -1,12 +1,17 @@
 import {CodeitError} from '../../types/error.types';
 import {clientInstance} from '../client';
 
-export async function writeReview(gatheringId: number, score: number, comment: string) {
+export async function editProfile(formData: FormData): Promise<void> {
   try {
-    await clientInstance.post({path: '/route/token/reviews/', body: {gatheringId, score, comment}});
+    await clientInstance.put({
+      path: '/route/token/auths/editProfile',
+      body: formData,
+      contentType: 'formData',
+    });
   } catch (error) {
     if (error instanceof CodeitError) {
       throw new CodeitError(error.message, error.status, error.code, error.parameter);
     }
+    throw error;
   }
 }

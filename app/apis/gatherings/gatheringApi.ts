@@ -1,7 +1,7 @@
 import {GetJoinedGatherings} from '../../types/gatherings/joinedGatherings.types';
 import {clientInstance, serverInstance} from '../client';
 
-export const getJoinedGatherings = async (): Promise<GetJoinedGatherings[]> => {
+export async function getJoinedGatherings(): Promise<GetJoinedGatherings[]> {
   try {
     const joinedGatherings = await clientInstance.get<GetJoinedGatherings[]>({
       path: `/route/token/gatherings/joinedGatherings`,
@@ -12,11 +12,9 @@ export const getJoinedGatherings = async (): Promise<GetJoinedGatherings[]> => {
     console.error('Error fetching joined gatherings:', error);
     throw error;
   }
-};
+}
 
-export const getJoinedGatheringsInServer = async (
-  token: string,
-): Promise<GetJoinedGatherings[]> => {
+export async function getJoinedGatheringsInServer(token: string): Promise<GetJoinedGatherings[]> {
   try {
     const defaultParams = {
       sortBy: 'dateTime',
@@ -37,9 +35,9 @@ export const getJoinedGatheringsInServer = async (
     console.error('Error fetching joined gatherings in server:', error);
     throw error;
   }
-};
+}
 
-export const leaveJoinedGatherings = async (gatheringId: number): Promise<void> => {
+export async function leaveJoinedGatherings(gatheringId: number): Promise<void> {
   try {
     await clientInstance.delete<GetJoinedGatherings[]>({
       path: `/route/token/gatherings/joinedGatherings/${gatheringId}`,
@@ -48,12 +46,12 @@ export const leaveJoinedGatherings = async (gatheringId: number): Promise<void> 
     console.error('Error fetching leave joined gatherings:', error);
     throw error;
   }
-};
+}
 
-export const leaveJoinedGatheringsInServer = async (
+export async function leaveJoinedGatheringsInServer(
   token: string,
   gatheringId: number,
-): Promise<void> => {
+): Promise<void> {
   try {
     await serverInstance.delete({
       path: `/gatherings/${gatheringId}/leave`,
@@ -63,4 +61,4 @@ export const leaveJoinedGatheringsInServer = async (
     console.error('참여한 모임 삭제 실패: ', error);
     throw error;
   }
-};
+}

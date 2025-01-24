@@ -78,11 +78,13 @@ export default function MyPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="text-center">로딩 중...</div>;
+    return <div className="pt-10 text-center">로딩 중...</div>;
   }
 
   if (isError) {
-    return <div className="text-center text-orange-600">데이터를 불러오는 데 실패했습니다.</div>;
+    return (
+      <div className="pt-10 text-center text-orange-600">데이터를 불러오는 데 실패했습니다.</div>
+    );
   }
 
   const tabOptions = [
@@ -134,6 +136,7 @@ export default function MyPage() {
       }
     };
 
+    // todo: api 요청 단계에서 필터링으로 리팩토링
     const filteredGatherings = (() => {
       if (!joinedGatherings || joinedGatherings.length === 0) {
         return [];
@@ -171,14 +174,14 @@ export default function MyPage() {
   };
 
   return (
-    <div className="md:px-[24px] flex w-full min-w-[375px] max-w-screen-desktop flex-col items-center justify-center bg-gray-50 px-[16px] py-[24px]">
+    <div className="flex w-full min-w-[375px] max-w-screen-desktop flex-col items-center justify-center bg-gray-50 px-[16px] py-[24px] md:px-[24px]">
       <h2 className="w-full max-w-[996px] text-left text-2xl font-semibold text-gray-900">
         마이 페이지
       </h2>
       <div className="mt-[24px] w-full max-w-[996px]">
         <ProfileLayout />
       </div>
-      <div className="min-w-sm sm:min-h-[720px] mt-[30px] flex w-full max-w-[996px] flex-col items-start justify-start border-t-2 border-gray-900 bg-white">
+      <div className="min-w-sm mt-[30px] flex w-full max-w-[996px] flex-col items-start justify-start border-t-2 border-gray-900 bg-white sm:min-h-[720px]">
         <div className="ml-[24px] mt-[24px] flex h-[34px] w-[300px] gap-[12px] text-gray-400">
           {tabOptions.map(tab => (
             <button

@@ -44,7 +44,7 @@ export function MyPageCard({
   };
 
   return (
-    <div className="relative flex h-[352px] w-[311px] max-w-[996px] flex-col justify-between tablet:h-[180px] tablet:w-full tablet:flex-col">
+    <div className="relative flex h-[352px] w-[311px] max-w-[996px] flex-col justify-between sm:h-[180px] sm:w-full sm:flex-col">
       {/* 리뷰 작성 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -55,9 +55,9 @@ export function MyPageCard({
       {/* 모임 취소 오버레이 */}
       {isCanceled()}
 
-      <div className="flex h-[328px] w-full flex-col justify-between tablet:h-[156px] tablet:w-[545px] tablet:flex-row">
+      <div className="flex h-[328px] w-full flex-col justify-between sm:h-[156px] sm:w-[545px] sm:flex-row">
         {/* 모임 이미지 */}
-        <div className="relative flex size-full items-center justify-center overflow-hidden rounded-3xl border border-dashed tablet:w-[280px]">
+        <div className="relative flex size-full items-center justify-center overflow-hidden rounded-3xl border border-dashed sm:w-[280px]">
           <Image src={image || ''} alt="모임 대표 이미지" className="object-cover" layout="fill" />
         </div>
 

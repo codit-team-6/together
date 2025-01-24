@@ -25,18 +25,18 @@ export default function ListCard({
   }
 
   return (
-    <div className="sm:h-[156px] sm:w-full sm:flex-row relative flex h-[316px] w-[343px] max-w-[996px] flex-col overflow-hidden rounded-3xl border-2 border-gray-100 bg-white">
+    <div className="relative flex h-[316px] w-[343px] max-w-[996px] flex-col overflow-hidden rounded-3xl border-2 border-gray-100 bg-white sm:h-[156px] sm:w-full sm:flex-row">
       {/* 마감 오버레이 */}
       {isClose()}
 
       {/* 모임 이미지 */}
-      <div className="sm:w-[280px] relative flex h-[156px] w-[343px] items-center justify-center overflow-hidden">
+      <div className="relative flex h-[156px] w-[343px] items-center justify-center overflow-hidden sm:w-[280px]">
         <Image src={image} alt="모임 대표 이미지" className="object-cover" layout="fill" />
         <CloseTag registrationEnd={registrationEnd} />
       </div>
 
       {/* 모임 정보 */}
-      <div className="sm:w-[716px] sm:pl-6 relative h-[156px] w-full pl-2">
+      <div className="relative h-[156px] w-full pl-2 sm:w-[716px] sm:pl-6">
         <button type="button" className="absolute right-5 top-5">
           <Image src="/emptyHeart.svg" alt="찜 버튼" width={48} height={48} unoptimized />
           {/* 기능 구현 필요함(찜하기) */}
