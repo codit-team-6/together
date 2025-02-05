@@ -1,12 +1,12 @@
-import {LOCATIONS, TYPES} from '../../constants/commonConstants';
+import {Gathering, Locations} from '../common/gatheringFilter.types';
 
 export type GetGatherings = {
   id: number; // 모임 ID
-  type: (typeof TYPES)[number]; // 모임 종류
+  type: Gathering; // 모임 종류
   name: string; // 모임 이름
   dateTime: string; // 모임 날짜
   registrationEnd: string; // 모임 모집 마감일
-  location: (typeof LOCATIONS)[number]; // 모임 위치
+  location: Locations; // 모임 위치
   participantCount: number; // 참여 인원
   capacity: number; // 모임 정원
   image: string; // 모임 대표 이미지

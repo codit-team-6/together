@@ -5,13 +5,15 @@ import {leaveJoinedGatherings} from '../../apis/gatherings/gatheringApi';
 export function ActionButton({
   isCompleted,
   isReviewed,
-  id,
+  gatheringId,
   onOpenModal,
+  userId,
 }: {
   isCompleted: boolean;
   isReviewed: boolean;
-  id: number;
+  gatheringId: number;
   onOpenModal: () => void;
+  userId: number;
 }) {
   const baseStyle = 'w-[120px] h-[40px] rounded-xl font-semibold text-sm';
   const router = useRouter();
@@ -25,11 +27,11 @@ export function ActionButton({
       if (isCompleted) {
         onOpenModal();
       } else {
-        await leaveJoinedGatherings(id);
+        await leaveJoinedGatherings(gatheringId, userId);
         router.push('/mypage');
       }
-    } catch {
-      throw new Error('API 요청 오류');
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : '모임 참여 취소 중 에러 발생');
     }
   };
   const style = isCompleted

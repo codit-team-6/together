@@ -1,3 +1,4 @@
+/** 모집 진행상황 bar */
 export function ProgressBar(participantCount: number, capacity: number) {
   const percent = Math.min((participantCount / capacity) * 100, 100);
   return (

@@ -1,9 +1,8 @@
 import {useState} from 'react';
 
 import Image from 'next/image';
-import {useRouter} from 'next/navigation';
 
-import {writeReview} from '../../apis/reviews/reviewApi';
+import {writeReview} from '../../apis/reviews/reviewsApi';
 import {InputTextBox} from '../common/inputText';
 
 export function WriteReviewModal({
@@ -15,7 +14,6 @@ export function WriteReviewModal({
 }) {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const route = useRouter();
 
   const handleSubmit = async () => {
     try {
@@ -30,7 +28,7 @@ export function WriteReviewModal({
 
       await writeReview(gatheringId, rating, comment);
       alert('리뷰가 등록되었습니다.');
-      route.push('/mypage');
+
       onClose();
     } catch (error) {
       alert('리뷰 등록에 실패했습니다.');

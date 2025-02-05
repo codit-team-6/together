@@ -1,8 +1,8 @@
-import {LOCATIONS, TYPES} from '../../constants/commonConstants';
+import {Gathering, Locations} from '../common/gatheringFilter.types';
 
 export type CreateGathering = {
-  location: (typeof LOCATIONS)[number];
-  type: (typeof TYPES)[number];
+  location: Locations;
+  type: Gathering;
   name: string;
   dateTime: string;
   capacity: number;

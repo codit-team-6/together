@@ -1,64 +1,115 @@
+import {GatheringsFilter, JoinedGatheringsFilter} from '../../types/gatherings/filters';
+import {GetGatherings} from '../../types/gatherings/getGatherings.types';
 import {GetJoinedGatherings} from '../../types/gatherings/joinedGatherings.types';
+import createQueryString from '../../utils/createQueryString';
 import {clientInstance, serverInstance} from '../client';
 
-export async function getJoinedGatherings(): Promise<GetJoinedGatherings[]> {
-  try {
-    const joinedGatherings = await clientInstance.get<GetJoinedGatherings[]>({
-      path: `/route/token/gatherings/joinedGatherings`,
-    });
-
-    return joinedGatherings;
-  } catch (error) {
-    console.error('Error fetching joined gatherings:', error);
-    throw error;
-  }
+interface ApiResponse<T> {
+  data: T;
+  message: string;
 }
 
-export async function getJoinedGatheringsInServer(token: string): Promise<GetJoinedGatherings[]> {
+// TODO: 에러처리 맞게 수정
+export const getGatherings = async (filters: GatheringsFilter = {}): Promise<GetGatherings[]> => {
+  try {
+    const queryString = createQueryString(filters);
+
+    const response = await clientInstance.get<ApiResponse<GetGatherings[]>>({
+      path: `/route/gatherings?${queryString}`,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('모임 목록 불러오는 중 에러 발생:', error);
+    throw error;
+  }
+};
+
+export const getGatheringsInServer = async (
+  filters: GatheringsFilter = {},
+): Promise<GetGatherings[]> => {
   try {
     const defaultParams = {
       sortBy: 'dateTime',
       sortOrder: 'asc',
+      ...filters,
     };
 
-    // 쿼리 문자열 생성
-    const queryString = new URLSearchParams(
-      defaultParams as unknown as Record<string, string>,
-    ).toString();
+    const queryString = createQueryString(defaultParams);
 
-    const joinedGatherings = await serverInstance.get<GetJoinedGatherings[]>({
+    const response = await serverInstance.get<GetGatherings[]>({
+      path: `/gatherings?${queryString}`,
+    });
+    return response;
+  } catch (error) {
+    console.error('server-모임 목록 불러오는 중 에러 발생:', error);
+    throw error;
+  }
+};
+
+export const getJoinedGatherings = async (
+  filters: JoinedGatheringsFilter = {},
+): Promise<GetJoinedGatherings[]> => {
+  try {
+    const queryString = createQueryString(filters);
+
+    const response = await clientInstance.get<ApiResponse<GetJoinedGatherings[]>>({
+      path: `/route/token/gatherings/joinedGatherings?${queryString}`,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('참여중인 모임 불러 오는 중 에러 발생:', error);
+    throw error;
+  }
+};
+
+export const getJoinedGatheringsInServer = async (
+  token: string,
+  filters: JoinedGatheringsFilter = {},
+): Promise<GetJoinedGatherings[]> => {
+  try {
+    const defaultParams = {
+      sortBy: 'dateTime',
+      sortOrder: 'asc',
+      ...filters,
+    };
+
+    const queryString = createQueryString(defaultParams);
+
+    const response = await serverInstance.get<GetJoinedGatherings[]>({
       path: `/gatherings/joined?${queryString}`,
       token,
     });
-    return joinedGatherings;
+    return response;
   } catch (error) {
-    console.error('Error fetching joined gatherings in server:', error);
+    console.error('server-참여중인 모임 불러 오는 중 에러 발생:', error);
     throw error;
   }
-}
+};
 
-export async function leaveJoinedGatherings(gatheringId: number): Promise<void> {
+export const leaveJoinedGatherings = async (gatheringId: number, userId: number): Promise<void> => {
   try {
     await clientInstance.delete<GetJoinedGatherings[]>({
-      path: `/route/token/gatherings/joinedGatherings/${gatheringId}`,
+      path: `/route/token/gatherings/joinedGatherings?gatheringId=${gatheringId}&userId=${userId}`,
     });
   } catch (error) {
-    console.error('Error fetching leave joined gatherings:', error);
+    console.error('모임 참여 취소 중 에러 발생:', error);
     throw error;
   }
-}
+};
 
-export async function leaveJoinedGatheringsInServer(
+export const leaveJoinedGatheringsInServer = async (
   token: string,
   gatheringId: number,
-): Promise<void> {
+): Promise<void> => {
   try {
     await serverInstance.delete({
       path: `/gatherings/${gatheringId}/leave`,
       token,
     });
   } catch (error) {
-    console.error('참여한 모임 삭제 실패: ', error);
+    console.error('server-모임 참여 취소 중 에러 발생: ', error);
     throw error;
   }
-}
+};

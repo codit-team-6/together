@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import {useRouter} from 'next/navigation';
 
 import {leaveJoinedGatherings} from '../../apis/gatherings/gatheringApi';
 
@@ -9,25 +10,27 @@ export function RenderOverlay({
   message,
   height,
   gatheringId,
+  userId,
 }: {
   message: string;
   height: string;
   gatheringId: number;
+  userId: number;
 }) {
+  const route = useRouter();
   const baseStyle = `absolute bg-black bg-opacity-80 z-10 top-0 left-0 flex items-center justify-center h-full w-full rounded-xl sm:rounded-3xl sm:h-${height}`;
 
   const buttonHandler = async () => {
-    if (typeof window === 'undefined') return;
-
     if (!gatheringId || gatheringId === 0) {
       // 모임 찾기 페이지에서는 작동 X
       return;
     }
     try {
-      await leaveJoinedGatherings(gatheringId);
-      window.location.href = '/mypage'; // 사용되는 곳이 mypage밖에 없어서 mypage로 reDirection
-    } catch (err) {
-      console.error('모임 삭제 중 오류 발생:', err);
+      await leaveJoinedGatherings(gatheringId, userId);
+
+      route.push('/mypage'); // 사용되는 곳이 mypage밖에 없어서 mypage로 reDirection
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : '모임 수정 중 에러 발생');
     }
   };
 

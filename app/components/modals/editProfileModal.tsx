@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
+import {useQueryClient} from '@tanstack/react-query';
 import Image from 'next/image';
-import {useRouter} from 'next/navigation';
 
 import {editProfile} from '../../apis/user/editProfileApi';
 import {InputTextBox} from '../common/inputText';
@@ -19,7 +19,7 @@ export function EditProfileModal({
   const [company, setCompany] = useState(companyName);
   const [file, setFile] = useState<File | null>(null);
 
-  const route = useRouter();
+  const queryClient = useQueryClient(); // react-query의 캐시 무효화 기능 사용
 
   const handleSubmit = async () => {
     try {
@@ -32,11 +32,12 @@ export function EditProfileModal({
 
       await editProfile(formData);
 
-      route.push('/mypage');
-      route.refresh();
+      // 업데이트 완료 후 캐시 무효화(userInfo 업데이트)
+      queryClient.invalidateQueries({queryKey: ['user']});
+
       onClose();
     } catch (error) {
-      console.error('프로필 정보 변경 중 오류 발생:', error);
+      throw new Error(error instanceof Error ? error.message : '프로필 수정에 실패했습니다.');
     }
   };
 
@@ -82,7 +83,7 @@ export function EditProfileModal({
             />
           </div>
 
-          <div className="h-[80px] w-full">
+          <div className="h-[80px] w-full font-semibold">
             <p>회사</p>
             <InputTextBox
               placeholder={`${companyName}`}

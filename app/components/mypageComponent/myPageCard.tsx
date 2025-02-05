@@ -4,8 +4,9 @@ import {useState} from 'react';
 
 import Image from 'next/image';
 
+import {useUserQuery} from '../../queries/user/useUserQueries';
 import {GetJoinedGatherings} from '../../types/gatherings/joinedGatherings.types';
-import formatDateUtil from '../../utils/formatDateUtil';
+import formatDateUtil from '../../utils/formatDate';
 import {RenderOverlay} from '../common/renderOverlay';
 import {WriteReviewModal} from '../modals/writeReviewModal';
 
@@ -16,6 +17,7 @@ type MyPageCardProps = GetJoinedGatherings & {
   isMyGathering: boolean;
 };
 
+// TODO: 카드 누르면 해당 모임 상세페이지로 이동 기능 구현
 /** 마이페이지 - 나의모임 card */
 export function MyPageCard({
   id,
@@ -32,8 +34,14 @@ export function MyPageCard({
 }: MyPageCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const {data: userInfo} = useUserQuery().getMyInfo();
+  const userId = userInfo?.data?.id as number;
+
   function isCanceled() {
-    if (canceledAt) return <RenderOverlay message="모집 취소" height="[328px]" gatheringId={id} />;
+    if (canceledAt)
+      return (
+        <RenderOverlay message="모집 취소" height="[328px]" gatheringId={id} userId={userId} />
+      );
     return null;
   }
 
@@ -100,10 +108,11 @@ export function MyPageCard({
           {/* 취소, 리뷰 버튼 */}
           <div className="mt-[12px] h-[40px]">
             <ActionButton
-              id={id}
+              gatheringId={id}
               isCompleted={isCompleted}
               isReviewed={isReviewed}
               onOpenModal={handleOpenModal}
+              userId={userId}
             />
           </div>
         </div>

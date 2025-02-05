@@ -1,62 +1,30 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 import Image from 'next/image';
 
-import {getUserInfo} from '../../apis/user/userApi';
-import {User} from '../../store/types/user.types';
+import {useUserQuery} from '../../queries/user/useUserQueries';
+import {TextRender} from '../common/textRender';
 import {EditProfileModal} from '../modals/editProfileModal';
 
 export function ProfileLayout() {
-  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true); // 모달 열기 상태로 변경
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const {getMyInfo} = useUserQuery();
+  const {data: userInfoResponse, isLoading, isError} = getMyInfo();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      setIsLoading(true);
-      try {
-        setIsError(false);
-        const userinfo = await getUserInfo();
-        if (userinfo) {
-          setUserInfo((userinfo as unknown as {data: User}).data);
-        } else {
-          setUserInfo(null);
-        }
-      } catch (error) {
-        setIsError(true);
-        console.error('유저 정보를 불러오는 중 에러 발생:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const userInfo = userInfoResponse?.data;
 
-    fetchUserInfo();
-  }, []);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   if (isLoading) {
-    return (
-      <div className="flex h-[178px] min-w-[343px] max-w-[996px] items-center justify-center rounded-3xl border-2 border-gray-200 bg-white">
-        <p>로딩 중...</p>
-      </div>
-    );
+    return <TextRender effect="bounce" text="로딩중..." />;
   }
 
-  if (!userInfo || isError) {
-    return (
-      <div className="flex h-[178px] min-w-[343px] max-w-[996px] items-center justify-center rounded-3xl border-2 border-gray-200 bg-white">
-        <p>사용자 정보를 불러오지 못했습니다.</p>
-      </div>
-    );
+  if (isError || !userInfo) {
+    return <TextRender effect="shake" text="사용자 정보를 불러오지 못했습니다." />;
   }
 
   return (
