@@ -1,14 +1,20 @@
-import Image from 'next/image';
+'use client';
 
-import {GetJoinedGatherings} from '../../types/gatherings/joinedGatherings.types';
+import Image from 'next/image';
+import {useRouter} from 'next/navigation';
+
+import {useUserQuery} from '../../queries/user/useUserQueries';
+import {GetGatherings} from '../../types/gatherings/getGatherings.types';
 import isClosedUtil from '../../utils/isClosed';
 import {ApproveCheck} from '../common/approveCheck';
 import {DateTimeInfoChip} from '../common/chips/chip-info';
 import {CloseTag} from '../common/chips/tag';
+import {LikeButton} from '../common/likeButton';
 import {ProgressBar} from '../common/progressBar';
 import {RenderOverlay} from '../common/renderOverlay';
 
 export function ListCard({
+  id,
   image,
   registrationEnd,
   participantCount,
@@ -16,12 +22,21 @@ export function ListCard({
   name,
   location,
   dateTime,
-}: GetJoinedGatherings) {
+}: GetGatherings) {
+  const {data: userInfo} = useUserQuery().getMyInfo();
+  const userId = userInfo?.data?.id as number;
+
+  const route = useRouter();
+
   function isClose() {
     if (isClosedUtil(registrationEnd, participantCount, capacity)) {
-      return <RenderOverlay message="모집 취소" height="full" gatheringId={0} />;
+      return <RenderOverlay message="모집 취소" height="full" gatheringId={0} userId={userId} />;
     }
     return null;
+  }
+
+  function joinNowButton() {
+    route.push(`/gatherings/${id}`);
   }
 
   return (
@@ -37,10 +52,8 @@ export function ListCard({
 
       {/* 모임 정보 */}
       <div className="relative h-[156px] w-full pl-2 sm:w-[716px] sm:pl-6">
-        <button type="button" className="absolute right-5 top-5">
-          <Image src="/emptyHeart.svg" alt="찜 버튼" width={48} height={48} unoptimized />
-          {/* 기능 구현 필요함(찜하기) */}
-        </button>
+        {/* 찜하기 버튼 */}
+        <LikeButton gatheringId={id} />
 
         <div className="flex h-[96px] items-center">
           <div className="flex h-[60px] w-[270px] flex-col">
@@ -76,16 +89,17 @@ export function ListCard({
           </div>
         </div>
 
-        {/* 클릭 하면 상세페이지로 이동(구현X) */}
+        {/* 클릭 하면 상세페이지로 이동 */}
         <button
           type="button"
           className="absolute bottom-5 right-5 flex font-semibold text-orange-600"
+          onClick={joinNowButton}
         >
           <p>join now</p>
           <Image
             className="ml-2 mt-1"
             src="icons/arrowIcon.svg"
-            alt="화살표 아이콘"
+            alt="join now"
             width={18}
             height={18}
             unoptimized

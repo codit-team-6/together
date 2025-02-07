@@ -1,14 +1,13 @@
 import {NextRequest, NextResponse} from 'next/server';
 
-import {getGatheringsInServer} from '../../apis/gatherings/gatheringApi';
-import {GatheringsFilter} from '../../types/gatherings/filters';
+import {getUserFromGatheringInServer} from '../../../apis/gatherings/gatheringApi';
 
 export async function GET(request: NextRequest) {
   try {
     const {searchParams} = new URL(request.url);
-    const filters: GatheringsFilter = Object.fromEntries(searchParams.entries());
+    const gatheringId = searchParams.get('gatheringId');
 
-    const response = await getGatheringsInServer(filters);
+    const response = await getUserFromGatheringInServer(Number(gatheringId));
 
     return NextResponse.json({message: '모임 조회 성공', data: response}, {status: 200});
   } catch (error) {

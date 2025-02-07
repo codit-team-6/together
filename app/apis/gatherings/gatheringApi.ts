@@ -1,3 +1,4 @@
+import {GatheringParticipant} from '../../types/gatherings/GatheringParticipant';
 import {GatheringsFilter, JoinedGatheringsFilter} from '../../types/gatherings/filters';
 import {GetGatherings} from '../../types/gatherings/getGatherings.types';
 import {GetJoinedGatherings} from '../../types/gatherings/joinedGatherings.types';
@@ -15,7 +16,7 @@ export const getGatherings = async (filters: GatheringsFilter = {}): Promise<Get
     const queryString = createQueryString(filters);
 
     const response = await clientInstance.get<ApiResponse<GetGatherings[]>>({
-      path: `/route/gatherings?${queryString}`,
+      path: `/route/gatherings/gathering?${queryString}`,
     });
 
     return response.data;
@@ -110,6 +111,35 @@ export const leaveJoinedGatheringsInServer = async (
     });
   } catch (error) {
     console.error('server-모임 참여 취소 중 에러 발생: ', error);
+    throw error;
+  }
+};
+
+export const getUserFromGathering = async (
+  gatheringId: number,
+): Promise<GatheringParticipant[]> => {
+  try {
+    const response = await clientInstance.get<ApiResponse<GatheringParticipant[]>>({
+      path: `/route/gatherings/gatheringParticipant?gatheringId=${gatheringId}`,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('모임의 참여자 정보 불러오는 중 에러 발생:', error);
+    throw error;
+  }
+};
+
+export const getUserFromGatheringInServer = async (
+  gatheringId: number,
+): Promise<GatheringParticipant[]> => {
+  try {
+    const response = await serverInstance.get<GatheringParticipant[]>({
+      path: `/gatherings/${gatheringId}/participants`,
+    });
+
+    return response;
+  } catch (error) {
+    console.error('server-모임의 참여자 정보 불러오는 중 에러 발생:', error);
     throw error;
   }
 };
