@@ -3,18 +3,19 @@
  * https://jestjs.io/docs/configuration
  */
 
-import nextJest from "next/jest";
-import type { Config } from "jest";
+import nextJest from 'next/jest';
+
+import type {Config} from 'jest';
 
 const createJestConfig = nextJest({
-  dir: "./",
+  dir: './',
 });
 
 /** @type {import('jest').Config} */
 const config: Config = {
-  coverageProvider: "v8",
-  testEnvironment: "jsdom",
-  testMatch: ["**/*.test.tsx"],
+  coverageProvider: 'v8',
+  testEnvironment: 'jsdom',
+  testMatch: ['**/*.test.tsx'],
 };
 
-module.exports = createJestConfig(config);
+export default createJestConfig(config);

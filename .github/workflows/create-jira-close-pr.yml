@@ -1,0 +1,68 @@
+name: CI
+on:
+  push:
+    branches:
+      - "feat/**"
+
+jobs:
+  run-test:
+    name: Run Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloads Codes
+        uses: actions/checkout@v4
+
+      - name: Install Deps
+        run: npm install
+        env:
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_TEAM_ID: ${{ secrets.NEXT_PUBLIC_TEAM_ID }}
+          NEXT_PUBLIC_FRONT_URL: ${{ secrets.NEXT_PUBLIC_FRONT_URL }}
+
+      - name: Run Test
+        run: npm run test
+        env:
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_TEAM_ID: ${{ secrets.NEXT_PUBLIC_TEAM_ID }}
+          NEXT_PUBLIC_FRONT_URL: ${{ secrets.NEXT_PUBLIC_FRONT_URL }}
+
+      - name: Run Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_TEAM_ID: ${{ secrets.NEXT_PUBLIC_TEAM_ID }}
+          NEXT_PUBLIC_FRONT_URL: ${{ secrets.NEXT_PUBLIC_FRONT_URL }}
+
+  # create-pr:
+  #   needs: run-test
+  #   name: Create PR
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download Codes
+  #       uses: actions/checkout@v4
+
+  #     # 브랜치 이름에서 Jira 이슈 번호 추출 (예: feat/#SCURM-1-login)
+  #     - name: Create PR Title
+  #       id: pr-title
+  #       run: |
+  #         BRANCH_NAME=${GITHUB_REF#refs/heads/}
+  #         JIRA_ISSUE=$(echo $BRANCH_NAME | grep -oE '#[A-Z]+-[0-9]+' | sed 's/^#//' || echo "")
+  #         echo "pr_title_content=$JIRA_ISSUE #close $BRANCH_NAME branch" >> $GITHUB_OUTPUT
+
+  #     - name: Create PR Template
+  #       id: pr-template
+  #       run: |
+  #         PR_BODY=$(cat .github/PULL_REQUEST_TEMPLATE.md)
+  #         ls -a
+  #         echo "pr_body<<EOF" >> $GITHUB_OUTPUT
+  #         echo "$PR_BODY" >> $GITHUB_OUTPUT
+  #         echo "EOF" >> $GITHUB_OUTPUT
+
+  #     - name: Create PR
+  #       uses: peter-evans/create-pull-request@v7
+  #       with:
+  #         title: "${{ steps.pr-title.outputs.pr_title_content }}"
+  #         body: ${{ steps.pr-template.outputs.pr_body }}
+  #         base: develop
+  #         branch: ${{github.ref}}
+  #         token: ${{ secrets.ACCESS_TOKEN_FOR_CI }}

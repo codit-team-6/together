@@ -19,3 +19,55 @@ body {
     text-wrap: balance;
   }
 }
+
+/** card component용 점선*/
+.custom-dotted-line {
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    #E5E7EB,
+    #E5E7EB 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+@layer utilities {
+  .no-spinner {
+    -moz-appearance: textfield;
+  }
+  
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+@layer utilities {
+  .scrollbar-thin {
+    /* Firefox */
+    @apply overflow-y-auto;
+  }
+
+  /* Chrome, Safari, Edge */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 3px;  /* 스크롤바 너비 */
+    /* height: 98px; 가로 스크롤바 높이 */
+    padding:0px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    width: 10px;
+    background: white;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #888888;  /* 스크롤바 색상 */
+    border-radius: 3px;
+  }
+
+  /* 호버 시 스크롤바 색상 */
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #a0aec0;  
+  } 
+}
